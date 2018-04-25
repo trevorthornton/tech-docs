@@ -12,11 +12,12 @@ ArchivesSpace. Be sure that your new settings are not commented out
 
 ### Database config
 
+
 #### `AppConfig[:db_url]`
 
 Set your database name and credentials. The default specifies that the embedded database should be used:
 
-`AppConfig[:db_url] = proc { AppConfig.demo_db_url }`
+`AppConfig[:db_url]`
 
 It is recommended to use a MySQL database instead of the embedded database.
 For more info, see
@@ -27,180 +28,311 @@ This is an example of specifying MySQL credentials:
 `AppConfig[:db_url] = "jdbc:mysql://127.0.0.1:3306/aspace?useUnicode=true&characterEncoding=UTF-8&user=as&password=as123"`
 
 
-#### `AppConfig[:db_max_connections] = proc { 20 + (AppConfig[:indexer_thread_count] * 2) }`
+#### `AppConfig[:db_max_connections]`
 
 Set the maximum number of database connections used by the application.
 Default is derived from the number of indexer threads.
 
+`AppConfig[:db_max_connections] = proc { 20 + (AppConfig[:indexer_thread_count] * 2) }`
+
 
 ### URLs for ArchivesSpace components
 
-#### `AppConfig[:backend_url] = "http://localhost:8089"`
+
+#### `AppConfig[:backend_url]`
 
 Set the ArchivesSpace backend port. The backend listens on port 8089 by default.
 
-#### `AppConfig[:frontend_url] = "http://localhost:8080"`
+`AppConfig[:backend_url] = "http://localhost:8089"`
+
+
+#### `AppConfig[:frontend_url]`
 
 Set the ArchivesSpace staff interface (frontend) port. The staff interface listens on port 8080 by default.
 
-#### `AppConfig[:public_url] = "http://localhost:8081"`
+`AppConfig[:frontend_url] = "http://localhost:8080"`
+
+
+#### `AppConfig[:public_url]`
 
 Set the ArchivesSpace public interface port. The public interface listens on port 8081 by default.
 
-#### `AppConfig[:oai_url] = "http://localhost:8082"`
+`AppConfig[:public_url] = "http://localhost:8081"`
+
+
+#### `AppConfig[:oai_url]`
 
 Set the ArchivesSpace OAI server port. The OAI server listens on port 8082 by default.
 
-#### `AppConfig[:solr_url] = "http://localhost:8090"`
+`AppConfig[:oai_url] = "http://localhost:8082"`
+
+
+#### `AppConfig[:solr_url]`
 
 Set the ArchivesSpace Solr index port. The OAI server listens on port 8090 by default.
 
-#### `AppConfig[:indexer_url] = "http://localhost:8091"`
+`AppConfig[:solr_url] = "http://localhost:8090"`
+
+
+#### `AppConfig[:indexer_url]`
 
 Set the ArchivesSpace indexer port. The indexer listens on port 8091 by default.
 
-#### `AppConfig[:docs_url] = "http://localhost:8888"`
+`AppConfig[:indexer_url] = "http://localhost:8091"`
+
+
+#### `AppConfig[:docs_url]`
 
 Set the ArchivesSpace API documentation port. The API documentation listens on port 8888 by default.
 
+`AppConfig[:docs_url] = "http://localhost:8888"`
 
 
-### Logging
 
-By default, logging will be output on the screen while the archivesspace command
+### Application logging
+
+By default, all logging will be output on the screen while the archivesspace command
 is running. When running as a daemon/service, this is put into a file in
-`logs/archivesspace.out`. You can change this file by changing the log value to
+`logs/archivesspace.out`. You can route log output to a different file per component by changing the log value to
 a filepath that archivesspace has write access to.
 
+You can also set the logging level for each component. Valid values are:
 
-```
-## Logging. By default, this will be output on the screen while the archivesspace
-## command is running. When running as a daemon/service, this is put into a
-## file in logs/archivesspace.out. You can change this file by changing the log
-## value to a filepath that archivesspace has write access to.
-#AppConfig[:frontend_log] = "default"
-## Log level for the frontend, values: (everything) debug, info, warn, error, fatal (severe only)
-#AppConfig[:frontend_log_level] = "debug"
-## Log level for the backend, values: (everything) debug, info, warn, error, fatal (severe only)
-#AppConfig[:backend_log] = "default"
-#AppConfig[:backend_log_level] = "debug"
-#
-#AppConfig[:pui_log] = "default"
-#AppConfig[:pui_log_level] = "debug"
-#
-#AppConfig[:indexer_log] = "default"
-#AppConfig[:indexer_log_level] = "debug"
-## Set to true to log all SQL statements.  Note that this will have a performance
-## impact!
-#AppConfig[:db_debug_log] = false
-## Set to true if you have enabled MySQL binary logging
-#AppConfig[:mysql_binlog] = false
-```
+* `debug` (everything)
+* `info`
+* `warn`
+* `error`
+* `fatal` (severe only)
 
-```
-## By default, Solr backups will run at midnight.  See https://crontab.guru/ for
-## information about the schedule syntax.
-#AppConfig[:solr_backup_schedule] = "0 * * * *"
-#AppConfig[:solr_backup_number_to_keep] = 1
-#AppConfig[:solr_backup_directory] = proc { File.join(AppConfig[:data_directory], "solr_backups") }
-```
+#### `AppConfig[:frontend_log]`
 
-```
-## add default solr params, i.e. use AND for search: AppConfig[:solr_params] = { "q.op" => "AND" }
-## Another example below sets the boost query value (bq) to boost the relevancy for the query string in the title,
-## sets the phrase fields parameter (pf) to boost the relevancy for the title when the query terms are in close proximity to
-## each other, and sets the phrase slop (ps) parameter for the pf parameter to indicate how close the proximity should be
-##  AppConfig[:solr_params] = {
-##      "bq" => proc { "title:\"#{@query_string}\"*" },
-##      "pf" => 'title^10',
-##      "ps" => 0,
-##    }
-#AppConfig[:solr_params] = {}
-```
+File for log output for the frontend (staff interface). Set to "default" to
+route log output to archivesspace.out.
+
+#### `#AppConfig[:frontend_log_level]`
+
+Logging level for the frontend.
 
 
+#### `AppConfig[:backend_log]`
+
+File for log output for the backend. Set to "default" to
+route log output to archivesspace.out.
+
+#### `#AppConfig[:backend_log_level]`
+
+Logging level for the backend.
+
+
+#### `AppConfig[:pui_log]`
+
+File for log output for the public UI. Set to "default" to
+route log output to archivesspace.out.
+
+#### `#AppConfig[:pui_log_level]`
+
+Logging level for the public UI.
+
+
+#### `AppConfig[:indexer_log]`
+
+File for log output for the indexer. Set to "default" to
+route log output to archivesspace.out.
+
+#### `#AppConfig[:indexer_log_level]`
+
+Logging level for the indexer.
+
+
+### Database logging
+
+#### `AppConfig[:db_debug_log]`
+
+Set to true to log all SQL statements.
+Note that this will have a performance impact!
+
+`AppConfig[:db_debug_log] = false`
+
+
+#### `AppConfig[:mysql_binlog]`
+
+Set to true if you have enabled MySQL binary logging.
+
+`AppConfig[:mysql_binlog] = false`
+
+
+### Solr backups
+
+#### `AppConfig[:solr_backup_schedule]`
+
+Set Solr back up schedule. By default, Solr backups will run at midnight.  See https://crontab.guru/ for
+ information about the schedule syntax.
+
+`AppConfig[:solr_backup_schedule] = "0 * * * *"`
+
+
+#### `AppConfig[:solr_backup_number_to_keep]`
+
+Number of Solr backups to keep (default = 1)
+
+`AppConfig[:solr_backup_number_to_keep] = 1`
+
+
+#### `AppConfig[:solr_backup_directory]`
+
+Directory to store Solr backups.
+
+`AppConfig[:solr_backup_directory] = proc { File.join(AppConfig[:data_directory], "solr_backups") }`
+
+
+### Default Solr params
+
+Add default solr params.
+
+A simple example: use AND for search:
+
+`AppConfig[:solr_params] = { "q.op" => "AND" }`
+
+A more complex example: set the boost query value (bq) to boost the relevancy
+for the query string in the title, set the phrase fields parameter (pf) to boost
+the relevancy for the title when the query terms are in close proximity to each
+other, and set the phrase slop (ps) parameter for the pf parameter to indicate
+how close the proximity should be:
+
 ```
-## Set the application's language (see the .yml files in
-## https://github.com/archivesspace/archivesspace/tree/master/common/locales for
-## a list of available locale codes)
-#AppConfig[:locale] = :en
+AppConfig[:solr_params] = {
+  "bq" => proc { "title:\"#{@query_string}\"*" },
+  "pf" => 'title^10',
+  "ps" => 0,
+}
 ```
 
 
-```
-## Plug-ins to load. They will load in the order specified
-#AppConfig[:plugins] = ['local',  'lcnaf']
-```
+### `AppConfig[:locale]`
+
+Set the application's language (see the .yml files in
+https://github.com/archivesspace/archivesspace/tree/master/common/locales
+for a list of available locale codes). Default is English (:en):
+
+`AppConfig[:locale] = :en`
 
 
-```
-## The number of concurrent threads available to run background jobs
-## Introduced for AR-1619 - long running jobs were blocking the queue
-## Resist the urge to set this to a big number!
-#AppConfig[:job_thread_count] = 2
-```
+
+### `AppConfig[:plugins]`
+
+Plug-ins to load. They will load in the order specified.
+
+`AppConfig[:plugins] = ['local',  'lcnaf']`
 
 
+### `AppConfig[:job_thread_count]`
+
+The number of concurrent threads available to run background jobs.
+Introduced because long running jobs were blocking the queue.
+Resist the urge to set this to a big number!
+
+`AppConfig[:job_thread_count] = 2`
+
+
+### OAI configuration options
+
+> TODO - Need better documentation here
+
 ```
-## OAI configuration options
-#AppConfig[:oai_repository_name] = 'ArchivesSpace OAI Provider'
-#AppConfig[:oai_proxy_url] = 'http://your-public-oai-url.example.com'
-#AppConfig[:oai_record_prefix] = 'oai:archivesspace'
-#AppConfig[:oai_admin_email] = 'admin@example.com'
-#
-## In addition to the sets based on level of description, you can define OAI Sets
-## based on repository codes and/or sponsors as follows
-##
-## AppConfig[:oai_sets] = {
-##   'repository_set' => {
-##     :repo_codes => ['hello626'],
-##     :description => "A set of one or more repositories",
-##   },
-##
-##   'sponsor_set' => {
-##     :sponsors => ['The_Sponsor'],
-##     :description => "A set of one or more sponsors",
-##   },
-## }
+AppConfig[:oai_repository_name] = 'ArchivesSpace OAI Provider'
+AppConfig[:oai_proxy_url] = 'http://your-public-oai-url.example.com'
+AppConfig[:oai_record_prefix] = 'oai:archivesspace'
+AppConfig[:oai_admin_email] = 'admin@example.com'
+```
+
+In addition to the sets based on level of description, you can define OAI Sets
+based on repository codes and/or sponsors as follows:
+
+```
+AppConfig[:oai_sets] = {
+  'repository_set' => {
+    :repo_codes => ['hello626'],
+    :description => "A set of one or more repositories",
+  },
+
+  'sponsor_set' => {
+    :sponsors => ['The_Sponsor'],
+    :description => "A set of one or more sponsors",
+  },
+}
 ```
 
 
 ## Other less commonly changed settings
 
+
+### `AppConfig[:default_admin_password]`
+
+Set default admin password. Default password is "admin".
+
+`#AppConfig[:default_admin_password] = "admin"`
+
+
+### Data directories
+
+If you run ArchivesSpace using the standard scripts (archivesspace.sh,
+archivesspace.bat or as a Windows service), the value of :data_directory is
+automatically set to be the "data" directory of your ArchivesSpace
+distribution.  You don't need to change this value unless you specifically
+want ArchivesSpace to put its data files elsewhere.
+
+`AppConfig[:data_directory] = File.join(Dir.home, "ArchivesSpace")`
+
+> TODO - Need better documentation here
+
+`AppConfig[:backup_directory] = proc { File.join(AppConfig[:data_directory], "demo_db_backups") }`
+
+`AppConfig[:solr_index_directory] = proc { File.join(AppConfig[:data_directory], "solr_index") }`
+
+`AppConfig[:solr_home_directory] = proc { File.join(AppConfig[:data_directory], "solr_home") }`
+
+
+### Solr defaults
+
+> TODO - Need better documentation here
+
+`AppConfig[:solr_indexing_frequency_seconds] = 30`
+
+`AppConfig[:solr_facet_limit] = 100`
+
+`AppConfig[:default_page_size] = 10`
+
+`AppConfig[:max_page_size] = 250`
+
+
+### AppConfig[:cookie_prefix]
+
+A prefix added to cookies used by the application.
+Change this if you're running more than one instance of ArchivesSpace on the
+same hostname (i.e. multiple instances on different ports).
+Default is "archivesspace".
+
+`AppConfig[:cookie_prefix] = "archivesspace"`
+
+
+### Indexer threads
+
+The periodic indexer can run using multiple threads to take advantage of
+multiple CPU cores. By setting these two options, you can control how many
+CPU cores are used, and the amount of memory that will be consumed by the
+indexing process (more cores and/or more records per thread means more memory used).
+
+`AppConfig[:indexer_records_per_thread] = 25`
+
+`AppConfig[:indexer_thread_count] = 4`
+
+
+
+
+### TO DO
+
 ```
-#AppConfig[:default_admin_password] = "admin"
-#
-## NOTE: If you run ArchivesSpace using the standard scripts (archivesspace.sh,
-## archivesspace.bat or as a Windows service), the value of :data_directory is
-## automatically set to be the "data" directory of your ArchivesSpace
-## distribution.  You don't need to change this value unless you specifically
-## want ArchivesSpace to put its data files elsewhere.
-##
-#AppConfig[:data_directory] = File.join(Dir.home, "ArchivesSpace")
-#
-#AppConfig[:backup_directory] = proc { File.join(AppConfig[:data_directory], "demo_db_backups") }
-#AppConfig[:solr_index_directory] = proc { File.join(AppConfig[:data_directory], "solr_index") }
-#AppConfig[:solr_home_directory] = proc { File.join(AppConfig[:data_directory], "solr_home") }
-#AppConfig[:solr_indexing_frequency_seconds] = 30
-#AppConfig[:solr_facet_limit] = 100
-#
-#AppConfig[:default_page_size] = 10
-#AppConfig[:max_page_size] = 250
-#
-## A prefix added to cookies used by the application.
-##
-## Change this if you're running more than one instance of ArchivesSpace on the
-## same hostname (i.e. multiple instances on different ports)
-#AppConfig[:cookie_prefix] = "archivesspace"
-#
-## The periodic indexer can run using multiple threads to take advantage of
-## multiple CPU cores.
-##
-## By setting the next two options, you can control how many CPU cores are used,
-## and the amount of memory that will be consumed by the indexing process (more
-## cores and/or more records per thread means more memory used).
-#AppConfig[:indexer_records_per_thread] = 25
-#AppConfig[:indexer_thread_count] = 4
+
 #AppConfig[:indexer_solr_timeout_seconds] = 300
 #
 ## PUI Indexer Settings
@@ -634,4 +766,5 @@ a filepath that archivesspace has write access to.
 #
 ##The number of characters to truncate before showing the 'Read More' link on notes
 #AppConfig[:pui_readmore_max_characters] = 450
+
 ```
